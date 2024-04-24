@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1092403392580",
+    "project_id": "tritheapp",
+    "storage_bucket": "tritheapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1092403392580:android:1b61726660e6e9ed590c11",
+        "android_client_info": {
+          "package_name": "com.example.tritheapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCNInzCuTMMRbccxKBtLDL6ptWNkIPli8g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

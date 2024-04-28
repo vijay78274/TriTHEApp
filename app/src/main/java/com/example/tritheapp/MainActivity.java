@@ -43,48 +43,6 @@ ActivityMainBinding binding;
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
 
-        dialog = new ProgressDialog(this);;
-        dialog.setMessage("Sending OTP...");
-        dialog.setCancelable(false);
-        binding.verifyPhone.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                phoneNumber=binding.phone.getText().toString();
-                if(phoneNumber.isEmpty()){
-                    binding.phone.setError("This field cannot be empty");
-                }
-                else {
-                    dialog.show();
-                    PhoneAuthOptions options =
-                            PhoneAuthOptions.newBuilder(auth)
-                                    .setPhoneNumber(phoneNumber)       // Phone number to verify
-                                    .setTimeout(60L, TimeUnit.SECONDS) // Timeout and unit
-                                    .setActivity(MainActivity.this)                 // (optional) Activity for callback binding
-                                    .setCallbacks(new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
-                                        @Override
-                                        public void onVerificationCompleted(@NonNull PhoneAuthCredential phoneAuthCredential) {
-
-                                        }
-
-                                        @Override
-                                        public void onVerificationFailed(@NonNull FirebaseException e) {
-
-                                        }
-
-                                        @Override
-                                        public void onCodeSent(@NonNull String verifyId, @NonNull PhoneAuthProvider.ForceResendingToken forceResendingToken) {
-                                            super.onCodeSent(verifyId, forceResendingToken);
-                                            verificationID = verifyId;
-                                            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-                                            imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
-                                            binding.otpView.requestFocus();
-                                            dialog.dismiss();
-                                        }
-                                    }).build();
-                    PhoneAuthProvider.verifyPhoneNumber(options);
-                }
-            }
-        });
         binding.SignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -97,9 +55,7 @@ ActivityMainBinding binding;
                     binding.password.setError("set a password");
                 }
                 else{
-                    if(verificationID.equals(binding.otpView.getText().toString())) {
-                        registerUser(mail,pass);
-                    }
+                    registerUser(mail,pass);
                 }
             }
         });

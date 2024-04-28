@@ -52,8 +52,8 @@ ActivityLogInBinding binding;
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
-                            Toast.makeText(LogIn.this, "Login successful", Toast.LENGTH_SHORT).show();
                             if(auth.getCurrentUser().isEmailVerified()){
+                                Toast.makeText(LogIn.this, "Login successful", Toast.LENGTH_SHORT).show();
                                 startActivity(new Intent(LogIn.this,Second.class));
                             }
                             else{

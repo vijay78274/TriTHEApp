@@ -3,6 +3,7 @@
     <style name="Base.Theme.TriTHEApp" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="otpViewStyle">@style/OtpWidget.OtpView</item>
     </style>
 
     <style name="Theme.TriTHEApp" parent="Base.Theme.TriTHEApp" />

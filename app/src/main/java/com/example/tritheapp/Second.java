@@ -13,5 +13,6 @@ ActivitySecondBinding binding;
         super.onCreate(savedInstanceState);
         binding=ActivitySecondBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
     }
 }

@@ -1,10 +1,20 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Base.Theme.TriTHEApp" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="Base.Theme.TriTHEApp" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="android:colorPrimary">@color/green</item>
+        <item name="colorPrimaryDark">#32CD32</item>
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
         <item name="otpViewStyle">@style/OtpWidget.OtpView</item>
     </style>
-
-    <style name="Theme.TriTHEApp" parent="Base.Theme.TriTHEApp" />
+    <style name="Theme.TriTHEApp.Transparent">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
+    </style>
+    <style name="Theme.TriTHEApp" parent="Base.Theme.TriTHEApp">
+        <item name="android:colorPrimary">#32CD32</item>
+        <item name="colorPrimaryDark">#32CD32</item>
+    </style>
 </resources>

@@ -32,8 +32,6 @@ ActivityMainBinding binding;
     FirebaseUser user;
     String mail;
     String pass;
-    String phoneNumber;
-    String verificationID;
     ProgressDialog dialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +40,10 @@ ActivityMainBinding binding;
         setContentView(binding.getRoot());
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
+
+        dialog = new ProgressDialog(this);
+        dialog.setMessage("Sending verification Email");
+        dialog.setCancelable(false);
 
         binding.SignUp.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -59,8 +61,16 @@ ActivityMainBinding binding;
                 }
             }
         });
+        binding.LogIn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this,LogIn.class);
+                startActivity(intent);
+            }
+        });
     }
     private void registerUser(String email, String password) {
+        dialog.show();
         auth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -69,6 +79,7 @@ ActivityMainBinding binding;
                             auth.getCurrentUser().sendEmailVerification().addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void unused) {
+                                    dialog.dismiss();
                                     Toast.makeText(MainActivity.this,"Registration completed",Toast.LENGTH_SHORT).show();
                                     Intent intent = new Intent(MainActivity.this,LogIn.class);
                                     startActivity(intent);

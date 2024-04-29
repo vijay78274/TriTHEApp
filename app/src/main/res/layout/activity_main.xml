@@ -37,9 +37,6 @@
                 android:layout_marginBottom="5sp"
                 android:hint="Enter email" />
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
                 <EditText
                     android:layout_marginBottom="5sp"
                     android:id="@+id/password"
@@ -48,16 +45,7 @@
                     android:layout_height="50sp"
                     android:background="@drawable/custom_edittext"
                     android:hint="Create a password" />
-                <TextView
-                    android:id="@+id/verifyEmail"
-                    android:layout_centerVertical="true"
-                    android:layout_marginEnd="10sp"
-                    android:layout_alignParentEnd="true"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Verify">
-                </TextView>
-            </RelativeLayout>
+
         </LinearLayout>
 
     </androidx.cardview.widget.CardView>

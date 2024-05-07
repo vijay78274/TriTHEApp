@@ -30,18 +30,17 @@ ActivityAddContactBinding binding;
             @Override
             public void onClick(View view) {
                 contact=binding.enterNumber.getText().toString();
-                contacts contact1 = new contacts(contact);
-                database.getReference().child("EmergencyContacts").push().setValue(contact1).addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void unused) {
-                        Intent intent = new Intent(AddContact.this, Emergency.class);
-                        startActivity(intent);
-                    }
-                });
-//                if(checkPattern(contact))
-//
-//                else
-//                    Toast.makeText(AddContact.this,"Enter a valid phone number",Toast.LENGTH_SHORT).show();
+                if(checkPattern(contact)){
+                    database.getReference().child("EmergencyContacts").push().setValue(contact).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void unused) {
+                            Intent intent = new Intent(AddContact.this, Emergency.class);
+                            startActivity(intent);
+                        }
+                    });
+                }
+                else
+                    Toast.makeText(AddContact.this,"Enter a valid phone number",Toast.LENGTH_SHORT).show();
             }
         });
     }

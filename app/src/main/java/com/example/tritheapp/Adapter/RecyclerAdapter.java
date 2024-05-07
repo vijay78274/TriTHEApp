@@ -16,28 +16,28 @@ import java.util.ArrayList;
 
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.RecyclerViewHolder> {
     Context context;
-    ArrayList<contacts> list;
-    public RecyclerAdapter(Context context, ArrayList<contacts> contacts){
+    ArrayList<String> list;
+    public RecyclerAdapter(Context context, ArrayList<String> contacts){
         this.context = context;
         this.list= contacts;
     }
 
     @NonNull
     @Override
-    public RecyclerAdapter.RecyclerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public RecyclerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.emergency_item,parent,false);
         return new RecyclerViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerAdapter.RecyclerViewHolder holder, int position) {
-        contacts pos = list.get(position);
-        holder.binding.textView.setText(pos.getPhoneNumber());
+    public void onBindViewHolder(@NonNull RecyclerViewHolder holder, int position) {
+        String pos = list.get(position);
+        holder.binding.textView.setText(pos);
     }
 
     @Override
     public int getItemCount() {
-        return 0;
+        return list.size();
     }
     public static class RecyclerViewHolder extends RecyclerView.ViewHolder{
         EmergencyItemBinding binding;

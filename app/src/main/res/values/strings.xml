@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">TriTHEApp</string>
+    <string name="accessibility_service_description">accessiblity\n</string>
 </resources>

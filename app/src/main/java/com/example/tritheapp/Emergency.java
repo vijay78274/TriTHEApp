@@ -20,12 +20,13 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Emergency extends AppCompatActivity {
 ActivityEmergencyBinding binding;
 RecyclerAdapter adapter;
 FirebaseDatabase database;
-ArrayList<contacts> contact;
+ArrayList<String> contact;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,14 +36,15 @@ ArrayList<contacts> contact;
         contact=new ArrayList<>();
         adapter= new RecyclerAdapter(this, contact);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        layoutManager.setOrientation(RecyclerView.HORIZONTAL);
+        layoutManager.setOrientation(RecyclerView.VERTICAL);
+        binding.recycler.setLayoutManager(layoutManager);
         binding.recycler.setAdapter(adapter);
         database.getReference("EmergencyContacts").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot snapshot1 : snapshot.getChildren()) {
-                    contacts contact1 = snapshot1.getValue(contacts.class);
-                    contact.add(contact1);
+                        String phone = snapshot1.getValue(String.class);
+                        contact.add(phone);
                 }
                 adapter.notifyDataSetChanged();
             }

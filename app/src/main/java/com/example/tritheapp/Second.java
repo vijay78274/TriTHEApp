@@ -45,13 +45,10 @@ import java.util.ArrayList;
 
 public class Second extends AppCompatActivity {
     private static final int REQUEST_LOCATION_PERMISSIONS = 123;
-    private static final int REQUEST_CODE_ENABLE_ADMIN = 1001;
     ActivitySecondBinding binding;
-    MyBroadcast receiver= new MyBroadcast();;
     FirebaseDatabase database;
     ArrayList<String> emergencyContacts;
     private static final int REQUEST_IGNORE_BATTERY_OPTIMIZATIONS = 124;
-    private static final int REQUEST_CODE_ENABLE_ACCESSIBILITY = 101;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,10 +66,9 @@ public class Second extends AppCompatActivity {
                 startActivityForResult(intent, REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
             }
         }
-//        IntentFilter filter = new IntentFilter();
-//        filter.addAction(Intent.ACTION_SCREEN_OFF);
-//        filter.addAction(Intent.ACTION_SCREEN_ON);
-//        registerReceiver(receiver,filter);
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(Intent.ACTION_SCREEN_OFF);
+        filter.addAction(Intent.ACTION_SCREEN_ON);
 
         binding.emergency.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -95,11 +91,6 @@ public class Second extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-        if (!isAccessibilityServiceEnabled()) {
-            requestAccessibilityService();
-        }
-        Intent serviceIntent = new Intent(this, MyForegroundService.class);
-        ContextCompat.startForegroundService(this, serviceIntent);
     }
 
     @Override
@@ -221,44 +212,6 @@ public class Second extends AppCompatActivity {
                 Toast.makeText(Second.this, "Battery optimization permission denied", Toast.LENGTH_SHORT).show();
             }
         }
-        if (requestCode == REQUEST_CODE_ENABLE_ACCESSIBILITY) {
-            if (isAccessibilityServiceEnabled()) {
-                Toast.makeText(this, "Accessibility service enabled", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(this, "Accessibility service not enabled", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-    @Override
-    protected void onStart() {
-        super.onStart();
-        IntentFilter filter = new IntentFilter(Intent.ACTION_SCREEN_OFF);
-        registerReceiver(receiver, filter);
-    }
-    @Override
-    protected void onStop() {
-        super.onStop();
-        unregisterReceiver(receiver);
-    }
-    private boolean isAccessibilityServiceEnabled() {
-        int accessibilityEnabled = 0;
-        final String service = getPackageName() + "/" + MyAccessibilityService.class.getCanonicalName();
-        try {
-            accessibilityEnabled = Settings.Secure.getInt(
-                    getApplicationContext().getContentResolver(),
-                    Settings.Secure.ACCESSIBILITY_ENABLED);
-        } catch (Settings.SettingNotFoundException e) {
-            // Accessibility settings not found
-        }
-
-        String settingValue = Settings.Secure.getString(
-                getApplicationContext().getContentResolver(),
-                Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES);
-        return settingValue != null && settingValue.contains(service);
     }
 
-    private void requestAccessibilityService() {
-        Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
-        startActivityForResult(intent, REQUEST_CODE_ENABLE_ACCESSIBILITY);
-    }
 }

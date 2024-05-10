@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.tritheapp.R;
 import com.example.tritheapp.databinding.EmergencyItemBinding;
-import com.example.tritheapp.models.contacts;
 
 import java.util.ArrayList;
 

@@ -13,6 +13,7 @@ import android.view.View;
 import com.example.tritheapp.Adapter.MeetingAdapter;
 import com.example.tritheapp.databinding.ActivityMeetingBinding;
 import com.example.tritheapp.models.meeting;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
@@ -24,6 +25,8 @@ public class Meeting extends AppCompatActivity {
 ActivityMeetingBinding binding;
 ArrayList<meeting> meetings;
 FirebaseDatabase database;
+String uid;
+FirebaseAuth auth;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,11 +34,13 @@ FirebaseDatabase database;
         setContentView(binding.getRoot());
         database=FirebaseDatabase.getInstance();
         meetings=new ArrayList<>();
+        auth=FirebaseAuth.getInstance();
+        uid=auth.getUid();
         MeetingAdapter adapter = new MeetingAdapter(meetings,this);
         GridLayoutManager layoutManager=new GridLayoutManager(this,2);
         binding.recycler.setLayoutManager(layoutManager);
         binding.recycler.setAdapter(adapter);
-        database.getReference().child("meeting").addValueEventListener(new ValueEventListener() {
+        database.getReference().child("meeting").child(uid).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for(DataSnapshot dataSnapshot: snapshot.getChildren()){

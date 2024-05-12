@@ -7,6 +7,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.app.PendingIntent;
 import android.app.admin.DevicePolicyManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -19,20 +20,26 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
-import android.provider.Settings;
 import android.telephony.SmsManager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
 import com.example.tritheapp.databinding.ActivitySecondBinding;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -48,27 +55,20 @@ public class Second extends AppCompatActivity {
     ActivitySecondBinding binding;
     FirebaseDatabase database;
     ArrayList<String> emergencyContacts;
+    String uid;
+    FirebaseAuth auth;
     private static final int REQUEST_IGNORE_BATTERY_OPTIMIZATIONS = 124;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivitySecondBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        auth=FirebaseAuth.getInstance();
+        uid=auth.getUid();
         getSupportActionBar();
+        emergencyContacts=new ArrayList<>();
         database = FirebaseDatabase.getInstance();
         new ContactRetrievalTask().execute();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-            if (!pm.isIgnoringBatteryOptimizations(getPackageName())) {
-                Intent intent = new Intent();
-                intent.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
-                intent.setData(Uri.parse("package:" + getPackageName()));
-                startActivityForResult(intent, REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
-            }
-        }
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(Intent.ACTION_SCREEN_OFF);
-        filter.addAction(Intent.ACTION_SCREEN_ON);
 
         binding.emergency.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -102,13 +102,13 @@ public class Second extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
-        FirebaseAuth.getInstance().signOut();
+//        FirebaseAuth.getInstance().signOut();
         if (id == R.id.profile) {
             Intent intent = new Intent(Second.this, Profile.class);
             startActivity(intent);
             return true;
         } else if (id == R.id.settings) {
-            Intent intent = new Intent(Second.this, Profile.class);
+            Intent intent = new Intent(Second.this, Settings.class);
             startActivity(intent);
             return true;
         }
@@ -116,7 +116,6 @@ public class Second extends AppCompatActivity {
     }
 
     void sendEmergencyAlert() {
-        // Get user's location
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         if (checkLocationPermission()) {
             Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
@@ -131,9 +130,10 @@ public class Second extends AppCompatActivity {
                 SmsManager smsManager = SmsManager.getDefault();
                 for (String contact : emergencyContacts) {
                     smsManager.sendTextMessage(contact, null, alertMessage, null, null);
+                    Log.d("SMS","send");
                 }
                 // Display confirmation to the user
-                Toast.makeText(this, "Emergency alert sent", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Emergency alert sent"+emergencyContacts, Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(this, "Unable to retrieve location", Toast.LENGTH_SHORT).show();
             }
@@ -141,7 +141,6 @@ public class Second extends AppCompatActivity {
         else{
             grantPermission();
         }
-
     }
 
     private class ContactRetrievalTask extends AsyncTask<Void, Void, ArrayList<String>> {
@@ -149,29 +148,21 @@ public class Second extends AppCompatActivity {
         @Override
         protected ArrayList<String> doInBackground(Void... voids) {
             // Retrieve contacts from Firebase Realtime Database
-            ArrayList<String> contacts = new ArrayList<>();
-            database.getReference().child("EmergencyContacts").addListenerForSingleValueEvent(new ValueEventListener() {
+            database.getReference().child("EmergencyContacts").child(uid).addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    for(DataSnapshot snapshot1:snapshot.getChildren()){
+                    for (DataSnapshot snapshot1 : snapshot.getChildren()) {
                         String phone = snapshot1.getValue(String.class);
-                        contacts.add(phone);
+                        emergencyContacts.add(phone);
                     }
                 }
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError error) {
-                    // Handle error
+
                 }
             });
-            return contacts;
-        }
-
-        @Override
-        protected void onPostExecute(ArrayList<String> contacts) {
-            super.onPostExecute(contacts);
-            // Process the retrieved contacts
-            emergencyContacts = contacts;
+            return emergencyContacts;
         }
     }
     private boolean checkLocationPermission() {
@@ -202,16 +193,16 @@ public class Second extends AppCompatActivity {
             }
         }
     }
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_IGNORE_BATTERY_OPTIMIZATIONS) {
-            if (resultCode == RESULT_OK) {
-
-            } else {
-                Toast.makeText(Second.this, "Battery optimization permission denied", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//        if (requestCode == REQUEST_IGNORE_BATTERY_OPTIMIZATIONS) {
+//            if (resultCode == RESULT_OK) {
+//
+//            } else {
+//                Toast.makeText(Second.this, "Battery optimization permission denied", Toast.LENGTH_SHORT).show();
+//            }
+//        }
+//    }
 
 }

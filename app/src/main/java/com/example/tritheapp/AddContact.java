@@ -9,6 +9,7 @@ import android.widget.Toast;
 
 import com.example.tritheapp.databinding.ActivityAddContactBinding;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.regex.Matcher;
@@ -18,19 +19,23 @@ public class AddContact extends AppCompatActivity {
 FirebaseDatabase database;
 String contact;
 ActivityAddContactBinding binding;
+String uid;
+FirebaseAuth auth;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityAddContactBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         database = FirebaseDatabase.getInstance();
+        auth = FirebaseAuth.getInstance();
+        uid=auth.getUid();
 
         binding.set.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 contact=binding.enterNumber.getText().toString();
                 if(checkPattern(contact)){
-                    database.getReference().child("EmergencyContacts").push().setValue(contact).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    database.getReference().child("EmergencyContacts").child(uid).push().setValue(contact).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void unused) {
                             Intent intent = new Intent(AddContact.this, Emergency.class);

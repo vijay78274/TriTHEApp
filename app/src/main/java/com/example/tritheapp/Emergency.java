@@ -11,6 +11,7 @@ import android.view.View;
 
 import com.example.tritheapp.Adapter.RecyclerAdapter;
 import com.example.tritheapp.databinding.ActivityEmergencyBinding;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
@@ -23,19 +24,23 @@ ActivityEmergencyBinding binding;
 RecyclerAdapter adapter;
 FirebaseDatabase database;
 ArrayList<String> contact;
+String uid;
+FirebaseAuth auth;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityEmergencyBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         database = FirebaseDatabase.getInstance();
+        auth = FirebaseAuth.getInstance();
+        uid=auth.getUid();
         contact=new ArrayList<>();
         adapter= new RecyclerAdapter(this, contact);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(RecyclerView.VERTICAL);
         binding.recycler.setLayoutManager(layoutManager);
         binding.recycler.setAdapter(adapter);
-        database.getReference("EmergencyContacts").addValueEventListener(new ValueEventListener() {
+        database.getReference("EmergencyContacts").child(uid).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot snapshot1 : snapshot.getChildren()) {

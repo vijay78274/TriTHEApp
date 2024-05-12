@@ -40,8 +40,12 @@
         -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyA7ssFlwYxJ_uhmaxcpmLt9QUoyCnwLlEY" />
+            android:value="YOUR_API_KEY" />
 
+        <activity
+            android:name=".MeetingLocation"
+            android:exported="false"
+            android:label="@string/title_activity_meeting_locaion" />
         <activity
             android:name=".MyMap"
             android:exported="false"
